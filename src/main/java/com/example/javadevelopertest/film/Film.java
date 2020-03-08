@@ -3,8 +3,7 @@ package com.example.javadevelopertest.film;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 public class Film {
   private Long id;
   private String url;

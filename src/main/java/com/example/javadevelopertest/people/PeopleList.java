@@ -5,9 +5,8 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Getter @Setter
 public class PeopleList {
-  String next;
-  List<People> results;
+  private String next;
+  private List<People> results;
 }

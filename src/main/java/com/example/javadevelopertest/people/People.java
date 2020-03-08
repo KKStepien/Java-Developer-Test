@@ -5,13 +5,12 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Getter @Setter
 public class People {
-  Long id;
-  String url;
-  String homeworld;
-  String name;
-  List<String> films;
+  private Long id;
+  private String url;
+  private String homeworld;
+  private String name;
+  private List<String> films;
 
 }

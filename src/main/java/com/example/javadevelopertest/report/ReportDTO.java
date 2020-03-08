@@ -6,8 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Getter @Setter
 public class ReportDTO {
   private Long id;
   private String characterPhrase;

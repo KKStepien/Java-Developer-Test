@@ -3,8 +3,7 @@ package com.example.javadevelopertest.reportResult;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 public class ReportResultDTO {
   private Long film_id;
   private String film_name;
