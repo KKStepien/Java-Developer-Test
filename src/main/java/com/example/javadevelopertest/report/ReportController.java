@@ -72,7 +72,7 @@ public class ReportController {
 
   private boolean findId(List<Report> reportList, Long id) {
     for (int i = 0; i < reportList.size(); i++) {
-      if (id == reportList.get(i).getId()) {
+      if (id.equals(reportList.get(i).getId())) {
         return true;
       }
     }
