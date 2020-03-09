@@ -12,7 +12,7 @@ public class PeopleService {
   public List<People> getAll() {
     RestTemplate rest = new RestTemplate();
     List<People> people = new ArrayList<>();
-    PeopleList peopleList = new PeopleList();
+    PeopleList peopleList;
 
     String next = "page1";
 

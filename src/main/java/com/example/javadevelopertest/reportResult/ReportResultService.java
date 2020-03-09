@@ -32,6 +32,12 @@ public class ReportResultService {
   private FilmService filmService;
 
   public List<ReportResult> foundResult(String characterPhrase, String planetName, Long idResult) {
+    if (characterPhrase == null || characterPhrase.equals("")) {
+      throw new RuntimeException("Character phrase is null or empty");
+    }
+    if (planetName == null || planetName.equals("")) {
+      throw new RuntimeException("Planet name is null or empty");
+    }
     List<People> peopleList = peopleService.getAll();
     List<ReportResult> reportResultList = new ArrayList<>();
 
@@ -45,7 +51,7 @@ public class ReportResultService {
 
           if (people.getFilms().size() > 0) {
             for (int j = 0; j < people.getFilms().size(); j++) {
-              Film film = foundFilm(people.getFilms().get(j));
+              Film film = filmService.getByID(people.getFilms().get(j));
 
               ReportResult reportResult = create(film.getId(), film.getTitle(), people.getId(),
                   people.getName(), planet.getId(), planet.getName(), idResult);
@@ -73,11 +79,6 @@ public class ReportResultService {
 
   private Planet foundPlanet(String url) {
     return planetService.getByID(url);
-  }
-
-  private Film foundFilm(String url) {
-    return filmService.getByID(url);
-
   }
 
   private boolean checkPhrase(String characterPhrase, String name) {

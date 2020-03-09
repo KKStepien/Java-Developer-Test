@@ -1,8 +1,10 @@
 package com.example.javadevelopertest.report;
 
+import com.example.javadevelopertest.ErrorDTO;
 import com.example.javadevelopertest.reportResult.ReportResult;
 import com.example.javadevelopertest.reportResult.ReportResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -13,9 +15,12 @@ public class ReportController {
   @Autowired
   private ReportService reportService;
 
+  @Autowired
+  private ReportRepository reportRepository;
+
   @PutMapping("/api/report/{id}")
   public void put(@RequestBody UpdateReportDTO updateReportDTO, @PathVariable Long id) {
-    List<Report> reportList = reportService.getAll();
+    List<Report> reportList = reportRepository.findAll();
     UpdateReport updateReport = new UpdateReport();
     updateReport.setCharacterPhrase(updateReportDTO.getCharacterPhrase());
     updateReport.setPlanetName(updateReportDTO.getPlanetName());
@@ -27,28 +32,19 @@ public class ReportController {
     }
   }
 
-  private boolean findId(List<Report> reportList, Long id) {
-    for (int i = 0; i < reportList.size(); i++) {
-      if (id == reportList.get(i).getId()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   @DeleteMapping("/api/report/{id}")
   public void deleteById(@PathVariable Long id) {
-    reportService.deleteById(id);
+    reportRepository.deleteById(id);
   }
 
   @DeleteMapping("/api/report")
   public void delete() {
-    reportService.delete();
+    reportRepository.deleteAll();
   }
 
   @GetMapping("/api/report")
   public List<ReportDTO> getAll() {
-    List<Report> reportList = reportService.getAll();
+    List<Report> reportList = reportRepository.findAll();
     List<ReportDTO> reportDTOS = new ArrayList<>();
 
     for (int i = 0; i < reportList.size(); i++) {
@@ -60,8 +56,27 @@ public class ReportController {
 
   @GetMapping("/api/report/{id}")
   public ReportDTO getById(@PathVariable Long id) {
-    Report report = reportService.getById(id);
+    Report report = reportRepository.findById(id);
     return getReportDTO(report);
+  }
+
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler(Exception.class)
+  public ErrorDTO handleError(Exception ex) {
+
+    ErrorDTO errorDTO = new ErrorDTO();
+    errorDTO.setMessage(ex.getMessage());
+
+    return errorDTO;
+  }
+
+  private boolean findId(List<Report> reportList, Long id) {
+    for (int i = 0; i < reportList.size(); i++) {
+      if (id == reportList.get(i).getId()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private ReportDTO getReportDTO(Report report) {
