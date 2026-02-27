@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 public class ReportController {
@@ -20,12 +21,11 @@ public class ReportController {
 
   @PutMapping("/api/report/{id}")
   public void put(@RequestBody UpdateReportDTO updateReportDTO, @PathVariable Long id) {
-    List<Report> reportList = reportRepository.findAll();
     UpdateReport updateReport = new UpdateReport();
     updateReport.setCharacterPhrase(updateReportDTO.getCharacterPhrase());
     updateReport.setPlanetName(updateReportDTO.getPlanetName());
 
-    if (findId(reportList, id)) {
+    if (reportRepository.existsById(id)) {
       reportService.update(updateReport, id);
     } else {
       reportService.create(updateReport.getCharacterPhrase(), updateReport.getPlanetName(), id);
@@ -56,27 +56,33 @@ public class ReportController {
 
   @GetMapping("/api/report/{id}")
   public ReportDTO getById(@PathVariable Long id) {
-    Report report = reportRepository.findById(id);
+    Report report = reportRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Report not found"));
     return getReportDTO(report);
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ErrorDTO handleValidationError(Exception ex) {
+    return getErrorDTO(ex);
+  }
+
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(NoSuchElementException.class)
+  public ErrorDTO handleNotFoundError(Exception ex) {
+    return getErrorDTO(ex);
   }
 
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(Exception.class)
   public ErrorDTO handleError(Exception ex) {
-
-    ErrorDTO errorDTO = new ErrorDTO();
-    errorDTO.setMessage(ex.getMessage());
-
-    return errorDTO;
+    return getErrorDTO(ex);
   }
 
-  private boolean findId(List<Report> reportList, Long id) {
-    for (int i = 0; i < reportList.size(); i++) {
-      if (id.equals(reportList.get(i).getId())) {
-        return true;
-      }
-    }
-    return false;
+  private ErrorDTO getErrorDTO(Exception ex) {
+    ErrorDTO errorDTO = new ErrorDTO();
+    errorDTO.setMessage(ex.getMessage());
+    return errorDTO;
   }
 
   private ReportDTO getReportDTO(Report report) {
