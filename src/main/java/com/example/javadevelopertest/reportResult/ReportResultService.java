@@ -33,10 +33,10 @@ public class ReportResultService {
 
   public List<ReportResult> foundResult(String characterPhrase, String planetName, Long idResult) {
     if (characterPhrase == null || characterPhrase.equals("")) {
-      throw new RuntimeException("Character phrase is null or empty");
+      throw new IllegalArgumentException("Character phrase is null or empty");
     }
     if (planetName == null || planetName.equals("")) {
-      throw new RuntimeException("Planet name is null or empty");
+      throw new IllegalArgumentException("Planet name is null or empty");
     }
     List<People> peopleList = peopleService.getAll();
     List<ReportResult> reportResultList = new ArrayList<>();
@@ -93,7 +93,8 @@ public class ReportResultService {
   private ReportResult create(Long filmId, String filmName, Long characterId, String characterName,
                               Long planetId, String planetName, Long idReport) {
     ReportResult reportResult = new ReportResult();
-    Report report = reportRepository.findById(idReport);
+    Report report = reportRepository.findById(idReport)
+        .orElseThrow(() -> new IllegalArgumentException("Report not found"));
 
     reportResult.setFilm_id(filmId);
     reportResult.setFilm_name(filmName);

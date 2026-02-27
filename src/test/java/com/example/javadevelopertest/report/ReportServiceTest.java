@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,7 +32,7 @@ public class ReportServiceTest {
 
     Report result = reportService.create("Luke", "Tatooine", 100L);
 
-    verify(reportRepository, times(2)).save(result);
+    verify(reportRepository, times(1)).save(result);
     assertThat(result.getCharacterPhrase()).isEqualTo("Luke");
     assertThat(result.getPlanetName()).isEqualTo("Tatooine");
     assertThat(result.getId()).isEqualTo(100L);
@@ -71,7 +69,7 @@ public class ReportServiceTest {
   @Test
   void shouldUpdate(){
     Report report = new Report();
-    given(reportRepository.findById(100L)).willReturn(report);
+    given(reportRepository.findById(100L)).willReturn(java.util.Optional.of(report));
     //given(reportRepository.save(any(Report.class)))
       //  .willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ReportService {
@@ -18,10 +19,10 @@ public class ReportService {
 
   public Report create(String characterPhrase, String planetName, Long id) {
     if (characterPhrase == null || characterPhrase.equals("")) {
-      throw new RuntimeException("Character phrase is null or empty");
+      throw new IllegalArgumentException("Character phrase is null or empty");
     }
     if (planetName == null || planetName.equals("")) {
-      throw new RuntimeException("Planet name is null or empty");
+      throw new IllegalArgumentException("Planet name is null or empty");
     }
     Report report = new Report();
     report.setCharacterPhrase(characterPhrase);
@@ -30,20 +31,21 @@ public class ReportService {
     reportRepository.save(report);
     List<ReportResult> reportResults = reportResultService.foundResult(characterPhrase, planetName, id);
     report.setResult(reportResults);
-    return reportRepository.save(report);
+    return report;
   }
 
   public Report update(UpdateReport updatereport, Long id) {
     if (updatereport == null) {
-      throw new RuntimeException("UpdateReport is null");
+      throw new IllegalArgumentException("UpdateReport is null");
     }
     if (updatereport.getCharacterPhrase() == null || updatereport.getCharacterPhrase().equals("")) {
-      throw new RuntimeException("Character phrase is null or empty");
+      throw new IllegalArgumentException("Character phrase is null or empty");
     }
     if (updatereport.getPlanetName() == null || updatereport.getPlanetName().equals("")) {
-      throw new RuntimeException("Planet name is null or empty");
+      throw new IllegalArgumentException("Planet name is null or empty");
     }
-    Report report = reportRepository.findById(id);
+    Report report = reportRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Report not found"));
     report.setCharacterPhrase(updatereport.getCharacterPhrase());
     report.setPlanetName(updatereport.getPlanetName());
     reportResultService.deleteByReportId(id);
